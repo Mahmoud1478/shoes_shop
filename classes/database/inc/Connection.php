@@ -3,16 +3,18 @@ namespace  database\inc;
 
 
 class Connection{
-    private ?\PDO $connection = null ;
-    private  \PDOStatement|null $statement  ;
+    protected \PDO $connection;
+    protected  \PDOStatement $statement  ;
+    protected  string $queryString = '';
+    protected  array $values = [];
     private array $options = [
         \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC,
         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
     ];
     public function __construct(){
-        if ($this->connection === null){
+        if (!isset($this->connection)){
             try {
-                $this->connection = new \PDO('mysql:host=localhost;dbname=shoes_store;charset=utf8','root','toor',$this->options);
+                $this->connection = new \PDO(DB_DRIVER.':host='.DB_Host.';dbname='.DB_NAME.';charset=utf8',DB_USER,DB_PASS,$this->options);
 
             }catch (\PDOException $e){
                 echo $e->getMessage();
@@ -21,30 +23,53 @@ class Connection{
         }
     }
 
-    public function prepare($statement){
+    public function prepare($statement): static
+    {
         $this->statement = $this->connection->prepare($statement);
         return $this;
     }
-    public function save(){
+    public function transaction(): static
+    {
         $this->connection->commit();
         return $this;
     }
-    public function execute(){
+    protected function execute(): static{
         $this->statement->execute();
         return $this;
     }
-
-    public function get_all(){
-        return  $this->statement->fetchAll();
+    public function save(): static
+    {
+        $this->prepare($this->queryString)->bind($this->values);
+        $this->queryString = '';
+        $this->values = [];
+        return $this;
     }
-    public function first(){
-        return  $this->statement->fetchOne();
+    public function get_all(): bool|array
+    {
+        $this->save();
+        $result = $this->statement->fetchAll();
+        return $result;
     }
-    public function bind($values){
+    public function first() :array|bool
+    {
+        $this->save();
+        $result =$this->statement->fetch();
+        return $result ;
+    }
+    public function bind($values): static
+    {
         foreach ($values as $index => $value){
             $this->statement->bindValue($index+1,$value);
         }
+        $this->execute();
         return  $this;
     }
-
+    public function getQuery(): string
+    {
+        return $this->queryString;
+    }
+    public function getValues(): array
+    {
+        return $this->values;
+    }
 }

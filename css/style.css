@@ -213,7 +213,7 @@ button {
 
 .header_section{
 	width: 100%;
-	float: left;
+	/*float: left;*/
 	background-image: url(../images/banner.png);
 	height: auto;
 	padding: 20px 0px;

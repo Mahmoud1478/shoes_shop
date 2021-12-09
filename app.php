@@ -5,3 +5,4 @@ if (!session_id()){
 require_once 'config.php';
 
 require_once 'autoload.php';
+require_once 'helpFunctions.php';
