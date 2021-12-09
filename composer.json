@@ -1,0 +1,15 @@
+{
+    "name": "mahmoud/shoes",
+    "description": "simple shoes shop",
+    "license": "MIT",
+    "autoload": {
+    },
+    "authors": [
+        {
+            "name": "mahmoud1478",
+            "email": "mah.mostafa18@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
