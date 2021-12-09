@@ -6,5 +6,5 @@ use \database\inc\BaseModel;
 
 class Users extends BaseModel
 {
-  
+
 }
