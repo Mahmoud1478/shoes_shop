@@ -37,7 +37,7 @@
         }
         $user = New \database\Users();
         //print_r($user->prepare('select * from users')->execute()->get_all())  ;
-        $user->prepare('insert into users (fname,lname,email,password,permisions) values(?,?,?,?,?) ')->bind(['mostafa','ali','mahmoud@exmp.com','125',3])->save();
+        $user->prepare('insert into users (fname,lname,email,password,permisions) values(?,?,?,?,?) ')->bind(['mostafa','ali','mahmoud@exmp.com','125',3])->execute();
 
 
     }
