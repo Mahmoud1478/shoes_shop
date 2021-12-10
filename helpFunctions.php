@@ -14,8 +14,14 @@ use JetBrains\PhpStorm\NoReturn;
     die();
 }
 
+#[NoReturn] function redirectFromCurrent(string $url , int $status = 303){
+    header('location:'.CWD.$url ,response_code:$status);
+    die();
+}
 #[NoReturn] function redirect(string $url , int $status = 303){
-    header('location:'.Home.$url ,response_code:$status);
+    header('location:'.DOC_ROOT.$url ,response_code:$status);
+    //echo DOC_ROOT.$url;
+
     die();
 }
 

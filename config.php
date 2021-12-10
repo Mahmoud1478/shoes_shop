@@ -1,6 +1,7 @@
 <?php
 const Root = __DIR__;
-define("Home", dirname($_SERVER['SCRIPT_NAME']));
+define("CWD", dirname($_SERVER['SCRIPT_NAME']));
+const DOC_ROOT = '/shoes/';
 const DS = DIRECTORY_SEPARATOR;
 const DB_Host = "localhost";
 const DB_USER = "root";

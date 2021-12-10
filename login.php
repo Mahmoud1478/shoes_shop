@@ -1,7 +1,7 @@
 <?php
     include_once 'layout/head_main.php';
     if (isset($_SESSION['user'])){
-        redirect('');
+        redirectFromCurrent('');
     }
     if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         if ($_REQUEST['email'] ===''){
@@ -20,7 +20,7 @@
             $user = $model->select('*')->where('email',$_REQUEST['email'])->where('password',$_REQUEST['password'])->first();
             if($user){
                 $_SESSION['user']=$user;
-                redirect('');
+                redirectFromCurrent('');
             }else{
                 $errors['password'] = 'password maybe wrong';
                 $errors['email'] = 'email maybe wrong';

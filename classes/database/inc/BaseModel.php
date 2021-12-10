@@ -124,6 +124,11 @@ class BaseModel extends Connection
         $this->queryString .= $preparedQuery;
         return $this;
     }
+    public function limit(int $num): static
+    {
+        $this->queryString .= ' LIMIT '.$num;
+        return $this;
+    }
     public function join(string $table): static
     {
         $preparedQuery =  Format::replace([
@@ -156,5 +161,14 @@ class BaseModel extends Connection
         ],ON_JOIN_STATEMENT);
         $this->queryString .= $preparedQuery;
         return $this;
+    }
+
+    public function all(): bool|array
+    {
+        return $this->select('*')->get_all();
+    }
+    public function find(int $id): bool|array
+    {
+        return $this->select('*')->where('id',$id)->limit(1)->first();
     }
 }

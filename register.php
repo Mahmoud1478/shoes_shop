@@ -36,7 +36,7 @@
                 'password'=>$_REQUEST['password'],
             ]);
             $_SESSION['user'] = $_REQUEST;
-            redirect('');
+            redirectFromCurrent('');
         }
     }
 ?>
