@@ -1,56 +1,107 @@
 <?php
+
+use Http\Server;
+
 include_once'../../app.php';
-if (isset(\Http\Server::query()['id'])){
-    $model = new \database\Users();
-    $user = $model->find(\Http\Server::query()['id']);
+$model = new \database\Users();
+if (!isset(Server::query()['id'])){
+    redirectFromCurrent('/all-users.php');
+}
+if (Server::method() === 'POST'){
+    $fields = ['fname','lname','permission','email','password'];
+    foreach ($fields as $field){
+        if (isset($_REQUEST[$field]) && $_REQUEST[$field] ===''){
+            $errors[$field] = 'field is required';
+        }else{
+            unset($errors['$field']);
+        }
+    }
+    if(!count($errors) > 0 ){
+        unset($errors);
+        $model->update([
+            'fname'=>$_REQUEST['fname'],
+            'lname'=>$_REQUEST['lname'],
+            'email'=>$_REQUEST['email'],
+            'password'=>$_REQUEST['password'],
+            'permissions'=>$_REQUEST['permission']
+        ])->where('id',Server::query()['id'])->save();
+        $_SESSION['user'] = $_REQUEST;
+        redirectFromCurrent('/all-users.php');
+    }
+
+}else{
+    $user = $model->find(Server::query()['id']);
     if (!$user){
         redirect('admin/404.php',404);
     }
-    include_once '../layout/header.php';
 }
-
+include_once '../layout/header.php';
 ?>
 <!-- partial -->
 <div class="page-wrapper mdc-toolbar-fixed-adjust">
     <main class="content-wrapper">
-        <div style="width:70%;margin: 0 auto;">
-            <div class="mdc-layout-grid__inner">
-                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
-                    <div class="mdc-text-field">
-                        <input class="mdc-text-field__input" id="text-field-hero-input" name="fname" value="<?php echo $user['fname']?>">
-                        <div class="mdc-line-ripple"></div>
-                        <label for="text-field-hero-input" class="mdc-floating-label">First Name</label>
+        <div class="d-flex from-wrapper">
+            <form method="post" action="<?php echo urlFromCurrent('/show.php?id='.$user['id']??'');?>" class="custom-form w-sm-100 w-md-50">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                        <div class="mdc-text-field">
+                            <input class="mdc-text-field__input" id="fname" name="fname" value="<?php if(isset($user)) { echo $user['fname'];} ?>">
+                            <div class="mdc-line-ripple"></div>
+                            <label for="fname" class="mdc-floating-label">First Name</label>
+                        </div>
                     </div>
-                </div>
-                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
-                    <div class="mdc-text-field">
-                        <input class="mdc-text-field__input" id="text-field-hero-input" name="lname" value="<?php echo $user['lname']?>">
-                        <div class="mdc-line-ripple"></div>
-                        <label for="text-field-hero-input" class="mdc-floating-label">Last Name</label>
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                        <div class="mdc-text-field">
+                            <input class="mdc-text-field__input" id="lname" name="lname" value="<?php if(isset($user)) {echo $user['lname'];}?>">
+                            <div class="mdc-line-ripple"></div>
+                            <label for="lname" class="mdc-floating-label">Last Name</label>
+                        </div>
                     </div>
-                </div>
-                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
-                    <div class="mdc-text-field">
-                        <input class="mdc-text-field__input" id="text-field-hero-input" type="email" name="email" value="<?php echo $user['email']?>">
-                        <div class="mdc-line-ripple"></div>
-                        <label for="text-field-hero-input" class="mdc-floating-label">email</label>
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
+                        <div class="mdc-text-field">
+                            <input class="mdc-text-field__input" id="email" type="email" name="email" value="<?php if(isset($user)) { echo $user['email'];}?>">
+                            <div class="mdc-line-ripple"></div>
+                            <label for="email" class="mdc-floating-label">email</label>
+                        </div>
                     </div>
-                </div>
-                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
-                    <div class="mdc-text-field mdc-text-field--with-trailing-icon">
-                        <i class="material-icons mdc-text-field__icon">visibility</i>
-                        <input class="mdc-text-field__input" id="text-field-hero-input" type="password" name="password" value="<?php echo $user['password']?>">
-                        <div class="mdc-notched-outline">
-                            <div class="mdc-notched-outline__leading"></div>
-                            <div class="mdc-notched-outline__notch">
-                                <label for="text-field-hero-input" class="mdc-floating-label">password</label>
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
+                        <div class="mdc-select demo-width-class w-100" data-mdc-auto-init="MDCSelect">
+                            <input type="hidden" name="permission" value="<?php if(isset($user)) { echo $user['permissions'];}?>">
+                            <i class="mdc-select__dropdown-icon"></i>
+                            <div class="mdc-select__selected-text"></div>
+                            <div class="mdc-select__menu mdc-menu-surface demo-width-class">
+                                <ul class="mdc-list">
+                                    <li class="mdc-list-item" data-value="1">
+                                       User
+                                    </li>
+                                    <li class="mdc-list-item" data-value="2">
+                                        Admin
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="mdc-notched-outline__trailing"></div>
+                            <span class="mdc-floating-label">Pick Permission</span>
+                            <div class="mdc-line-ripple"></div>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
+                        <div class="mdc-text-field mdc-text-field--with-trailing-icon">
+                            <i class="material-icons mdc-text-field__icon event-all" style="z-index: 50" id="show-field" data-show ="password">visibility</i>
+                            <input class="mdc-text-field__input" id="password" type="password" name="password" value="<?php if(isset($user)) { echo $user['password'];}?>">
+                            <div class="mdc-notched-outline">
+                                <div class="mdc-notched-outline__leading"></div>
+                                <div class="mdc-notched-outline__notch">
+                                    <label for="password" class="mdc-floating-label">password</label>
+                                </div>
+                                <div class="mdc-notched-outline__trailing"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop mt-4">
+                    <button class="mdc-button mdc-button--raised" type="submit">save</button>
+                </div>
+            </form>
+        </div
     </main>
     <!-- partial:../../partials/_footer.html -->
     <?php include_once '../layout/footer.php';?>
@@ -68,6 +119,19 @@ if (isset(\Http\Server::query()['id'])){
 <script src="../assets/js/misc.js"></script>
 <!-- endinject -->
 <!-- Custom js for this page-->
+<script>
+    window.addEventListener('load',()=>{
+        const showBtn = document.getElementById('show-field');
+        showBtn.addEventListener('click',()=>{
+            const target = document.getElementById(showBtn.dataset.show);
+            if (target.type ==='password'){
+                target.type ='text'
+            }else {
+                target.type ='password'
+            }
+        })
+    })
+</script>
 <!-- End custom js for this page-->
 </body>
 </html>

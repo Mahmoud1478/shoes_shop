@@ -1,4 +1,3 @@
-<?php include_once '../../app.php';?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +14,7 @@
     <!-- End plugin css for this page -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="../assets/css/demo/style.css">
+    <link rel="stylesheet" href="../assets/css/demo/custom.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../assets/images/favicon.png" />
 </head>

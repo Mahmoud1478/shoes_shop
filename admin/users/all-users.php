@@ -1,8 +1,8 @@
 <?php
-include_once '../layout/header.php';
+include_once '../../app.php';
 $model = new \database\Users();
-$users = $model->all()
-
+$users = $model->all();
+include_once '../layout/header.php';
 ?>
 <!-- partial -->
             <div class="page-wrapper mdc-toolbar-fixed-adjust">

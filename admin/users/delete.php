@@ -1,8 +1,9 @@
 <?php
 include_once '../../app.php';
 use Http\Server;
+use database\Users;
 if (Server::method() === 'POST'&& isset(Server::query()['id'])){
-    $model = new \database\Users();
+    $model = new Users();
     $model->delete()->where('id',Server::query()['id'])->save();
 }
-redirect('/all-users.php');
+redirectFromCurrent('/all-users.php');

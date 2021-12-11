@@ -1,0 +1,28 @@
+.from-wrapper{
+    height: calc(100vh - 150px);
+}
+.from-wrapper .custom-form{
+
+}
+@media (min-width: 960px) {
+    .w-md-50{
+        width: 50%;
+    }
+    .w-md-25{
+        width: 25%;
+    }
+}
+@media (max-width: 768px) {
+    .w-sm-50{
+        width: 50%;
+    }
+    .w-sm-25{
+        width: 25%;
+    }
+    .w-sm-100{
+        width: 100%;
+    }
+}
+.event-all{
+    pointer-events:all !important;
+}

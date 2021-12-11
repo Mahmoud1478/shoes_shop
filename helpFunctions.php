@@ -25,5 +25,12 @@ use JetBrains\PhpStorm\NoReturn;
     die();
 }
 
-
+function urlFromCurrent(string $url): string
+{
+    return CWD.$url;
+}
+function url(string $url): string
+{
+    return DOC_ROOT.$url;
+}
 
