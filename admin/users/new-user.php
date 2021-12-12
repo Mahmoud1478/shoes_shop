@@ -1,9 +1,10 @@
 <?php
 include_once '../../app.php';
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
 use Http\Server;
 use database\Users;
-
-
 
 if (Server::method() === 'POST'){
     $fields = ['fname','lname','permission','email','password'];

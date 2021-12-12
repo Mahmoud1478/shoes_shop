@@ -2,19 +2,21 @@
 namespace  database\inc;
 
 
+use Cassandra\Statement;
+
 class Connection{
-    protected \PDO $connection;
+    protected  static \PDO $connection;
     protected  \PDOStatement $statement  ;
     protected  string $queryString = '';
     protected  array $values = [];
-    private array $options = [
-        \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC,
+    private static array $options = [
+        \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_OBJ,
         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
     ];
-    public function __construct(){
+    protected function __construct(){
         if (!isset($this->connection)){
             try {
-                $this->connection = new \PDO(DB_DRIVER.':host='.DB_Host.';dbname='.DB_NAME.';charset=utf8',DB_USER,DB_PASS,$this->options);
+                static::$connection = new \PDO(DB_DRIVER.':host='.DB_Host.';dbname='.DB_NAME.';charset=utf8',DB_USER,DB_PASS,static::$options);
 
             }catch (\PDOException $e){
                 echo $e->getMessage();
@@ -23,38 +25,36 @@ class Connection{
         }
     }
 
-    public function prepare($statement): static
+    public  function prepare($statement): static
     {
-        $this->statement = $this->connection->prepare($statement);
-        return $this;
+       $this->statement = static::$connection->prepare($statement);
+        return $this ;
     }
     public function transaction(): static
     {
-        $this->connection->commit();
+        static::$connection->commit();
         return $this;
     }
     protected function execute(): static{
         $this->statement->execute();
         return $this;
     }
-    public function save(): static
+    public  function save(): static
     {
         $this->prepare($this->queryString)->bind($this->values);
         $this->queryString = '';
         $this->values = [];
-        return $this;
+        return  $this;
     }
     public function get_all(): bool|array
     {
         $this->save();
-        $result = $this->statement->fetchAll();
-        return $result;
+        return $this->statement->fetchAll();
     }
-    public function first() :array|bool
+    public function first(): bool|\stdClass
     {
         $this->save();
-        $result =$this->statement->fetch();
-        return $result ;
+        return $this->statement->fetch();
     }
     public function bind($values): static
     {

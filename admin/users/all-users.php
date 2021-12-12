@@ -1,5 +1,8 @@
 <?php
 include_once '../../app.php';
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
 $model = new \database\Users();
 $users = $model->all();
 include_once '../layout/header.php';
@@ -24,29 +27,26 @@ include_once '../layout/header.php';
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php
-                                    foreach ($users as $user)
-                                    echo '
-                                    <tr>
-                                        <td class="text-left">'.$user['fname'].'</td>
-                                        <td>'.$user['lname'].'</td>
-                                        <td>'.$user['email'].'</td>
-                                        <td>'.$user['password'].'</td>
-                                        <td>'.\mappers\PermissionsMapper::getPermission($user['permissions']).'</td>
-                                       <td class="d-flex justify-content-end" >
-                                       <form action="'.CWD.'/delete.php?id='.$user['id'].'" method="post">
-                                           <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
-                                                <i class="material-icons mdc-button__icon">delete</i>
-                                          </button>
-                                       </form>
-                                      <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="'.CWD.'/show.php?id='.$user['id'].'">
-                                            <i class="material-icons mdc-button__icon">edite</i>
-                                      </a>
-                                      
-                                       </td>
-                                    </tr>
-                                    '
-                                    ?>
+                                    <?php foreach($users as $user){ ?>
+                                        <tr>
+                                            <td class="text-left"> <?php echo $user->fname?></td>
+                                            <td><?php echo $user->fname?></td>
+                                            <td><?php echo $user->lname?></td>
+                                            <td><?php echo $user->email?></td>
+                                            <td><?php echo \mappers\PermissionsMapper::getPermission($user->permissions) ?></td>
+                                           <td class="d-flex justify-content-end" >
+                                               <form action="<?php printf('%s/show.php?id=%s',CWD,$user->id??'') ?>" method="post">
+                                                   <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
+                                                        <i class="material-icons mdc-button__icon">delete</i>
+                                                  </button>
+                                               </form>
+                                              <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="<?php printf('%s/show.php?id=%s',CWD,$user->id??'') ?>">
+                                                    <i class="material-icons mdc-button__icon">edit</i>
+                                              </a>
+
+                                           </td>
+                                        </tr
+                                    <?php }; ?>
                                     </tbody>
                                 </table>
                             </div>

@@ -4,7 +4,10 @@ use database\Products;
 use database\Categories;
 use Http\Server;
 
-if (!isset(Server::query()['id'])){
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
+if (!isset($_GET['id'])){
     redirectFromCurrent('/all-users.php');
 }
 $model = new Products();
@@ -16,7 +19,7 @@ if (Server::method() === 'POST'){
         if (isset($_REQUEST[$field]) && $_REQUEST[$field] ===''){
             $errors[$field] = 'field is required';
         }else{
-            unset($errors['$field']);
+            unset($errors[$field]);
         }
     }
     if(!count($errors) > 0 ){
@@ -26,13 +29,13 @@ if (Server::method() === 'POST'){
             'price'=>$_REQUEST['price'],
             'category_id'=>$_REQUEST['category'],
             'picture'=>$_REQUEST['picture'],
-        ])->where('id',Server::query()['id'])->save();
+        ])->where('id',$_GET['id'])->save();
         $_SESSION['user'] = $_REQUEST;
         redirectFromCurrent('/all-products.php');
     }
 
 }else{
-    $product = $model->find(Server::query()['id']);
+    $product = $model->find($_GET['id']);
     if (!$product){
         redirect('admin/404.php',404);
     }
@@ -43,44 +46,43 @@ include_once '../layout/header.php';
 <div class="page-wrapper mdc-toolbar-fixed-adjust">
     <main class="content-wrapper">
         <div class="d-flex from-wrapper">
-            <form method="post" action="<?php echo urlFromCurrent('/show.php?id='.$product['id']??'');?>" class="custom-form w-sm-100 w-md-50">
+            <form method="post" action="<?php echo urlFromCurrent('/show.php?id='.$product->id??'');?>" class="custom-form w-sm-100 w-md-50">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="name" type="text" name="name" value="<?php if(isset($product)){echo $product['name'];}?>">
+                            <input class="mdc-text-field__input" id="name" type="text" name="name" value="<?php if(isset($product)){echo $product->name;}?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="name" class="mdc-floating-label">name</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="price" type="text" name="price" value="<?php if(isset($product)){echo $product['price'];}?>">
+                            <input class="mdc-text-field__input" id="price" type="text" name="price" value="<?php if(isset($product)){echo $product->price;}?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="name" class="mdc-floating-label">price</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="picture" type="text" name="picture" value="<?php if(isset($product)){echo $product['picture'];}?>">
+                            <input class="mdc-text-field__input" id="picture" type="text" name="picture" value="<?php if(isset($product)){echo $product->picture;}?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="name" class="mdc-floating-label">picture</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-select demo-width-class w-100" data-mdc-auto-init="MDCSelect">
-                            <input type="hidden" name="category" value="<?php if(isset($product)){echo $product['category_id'];}?>">
+                            <input type="hidden" name="category" value="<?php if(isset($product)){echo $product->category_id;}?>">
                             <i class="mdc-select__dropdown-icon"></i>
                             <div class="mdc-select__selected-text"></div>
                             <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                 <ul class="mdc-list">
-                                    <?php
-                                    foreach ($categories as $category)
-                                        echo '
-                                    <li class="mdc-list-item" data-value="'.$category['id'].'">
-                                        '.$category['name'].'
+                                <?php foreach ($categories as $category){ ?>
+
+                                    <li class="mdc-list-item" data-value="<?php echo $category->id?>">
+                                        <?php echo $category->name ?>
                                     </li>
-                                    '
-                                    ?>
+
+                                <?php };?>
                                 </ul>
                             </div>
                             <span class="mdc-floating-label">Pick Category</span>

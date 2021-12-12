@@ -1,5 +1,8 @@
 <?php
 include_once '../../app.php';
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
 use Http\Server;
 use database\Products;
 use database\Categories;
@@ -64,14 +67,13 @@ include_once '../layout/header.php';
                             <div class="mdc-select__selected-text"></div>
                             <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                 <ul class="mdc-list">
-                                   <?php
-                                   foreach ($categories as $category)
-                                    echo '
-                                    <li class="mdc-list-item" data-value="'.$category['id'].'">
-                                        '.$category['name'].'
+                                   <?php foreach ($categories as $category) { ?>
+
+                                    <li class="mdc-list-item" data-value="<?php echo $category->id?>">
+                                        <?php echo $category->name?>
                                     </li>
-                                    '
-                                   ?>
+
+                                   <?php };?>
                                 </ul>
                             </div>
                             <span class="mdc-floating-label">Pick Category</span>

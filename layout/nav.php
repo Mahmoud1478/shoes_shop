@@ -16,19 +16,15 @@
                     <a class="nav-item nav-link" href="contact.php">Contact</a>
                     <a class="nav-item nav-link last" href="#"><img src="images/search_icon.png"></a>
                     <a class="nav-item nav-link last" href="contact.php"><img src="images/shop_icon.png"></a>
-                    <?php
-                    if (!isset($_SESSION['user'])){
-                        echo '
-                                 <a class="nav-item nav-link" href="login.php">login</a>
-                                <a class="nav-item nav-link" href="register.php">register</a>
-                                ';
-                    }else{
-                        echo '<a class="nav-item nav-link" href="logout.php">logout</a>';
-                        if ($_SESSION['user']['permisions'] == 2){
-                            echo '<a class="nav-item nav-link" href="admin/">admin</a>';
-                        }
-                    }
-                    ?>
+                    <?php if (!isset($_SESSION['user'])){ ?>
+                    <a class="nav-item nav-link" href="login.php">login</a>
+                    <a class="nav-item nav-link" href="register.php">register</a>
+                    <?php }else{ ?>
+                    <a class="nav-item nav-link" href="logout.php">logout</a>
+                    <?php if ($_SESSION['user']->permissions == 2){ ?>
+                    <a class="nav-item nav-link" href="<?php echo urlFromCurrent('/admin')?>">admin</a>
+                    <?php }};?>
+
                 </div>
             </div>
         </nav>

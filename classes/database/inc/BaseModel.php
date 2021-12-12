@@ -23,7 +23,6 @@ const ON_JOIN_STATEMENT = ' ON {local_key} = {foreign_key}';
 class BaseModel extends Connection
 {
     protected  string $tableName;
-
     public function __construct()
     {
         parent::__construct();
@@ -36,55 +35,55 @@ class BaseModel extends Connection
         return end($exploded_);
     }
 
-    public function create(array $columns){
+    public  function create(array $columns){
         $querySegments = Format::prepareSelect($columns);
         $preparedQuery =  Format::replace([
-            'table'=>$this->tableName,
+            'table'=> $this->tableName,
             'columns'=>$querySegments['columns'],
             'placeholder'=>$querySegments['placeholder']
         ],INSERT_STATEMENT);
         $this->queryString=$preparedQuery;
-        $this->values = array_merge($this->values , $querySegments['values']);
+        static::$values  = array_merge(static::$values , $querySegments['values']);
         //array_push($this->values,...$querySegments['values']);
         $this->save();
     }
 
-    public function select(string...$columns): static
+    public  function select(string...$columns): static
     {
         $preparedQuery =  Format::replace([
-            'table'=>$this->tableName,
+            'table'=> $this->tableName,
             'columns'=>Format::join(',',$columns),
         ],SELECT_STATEMENT);
         $this->queryString=$preparedQuery;
-        return $this;
+        return $this ;
     }
-    public function update(array $columns): static
+    public  function update(array $columns): static
     {
         $preparedQuery =  Format::replace([
-            'table'=>$this->tableName,
+            'table'=> $this->tableName,
             'columns'=>Format::prepareUpdate($columns),
         ],UPDATE_STATEMENT);
         $this->queryString=$preparedQuery;
-        $this->values = array_merge($this->values , array_values($columns));
+        $this->values  = array_merge($this->values,array_values($columns));
         //array_push($this->values,...$querySegments['values']);
         return $this;
     }
-    public function delete(): static
+    public  function delete(): static
     {
         $preparedQuery =  Format::replace([
-            'table'=>$this->tableName,
+            'table'=> $this->tableName,
         ],DELETE_STATEMENT);
         $this->queryString=$preparedQuery;
         return $this;
     }
-    public function where(string $condition , $value , string $operator = '='): static
+    public  function where(string $condition , $value , string $operator = '='): static
     {
         $preparedQuery =  Format::replace([
             'condition'=>$condition,
             'operator'=>$operator,
         ],!strpos($this->queryString,'WHERE')?WHERE_STATEMENT :AND_STATEMENT);
         $this->queryString .= $preparedQuery;
-        array_push($this->values,$value);
+        array_push($this->values ,$value);
         return $this;
     }
     public function orWhere(string $condition , $value , string $operator = '='): static
@@ -94,7 +93,7 @@ class BaseModel extends Connection
             'operator'=>$operator,
         ],OR_STATEMENT);
         $this->queryString .= $preparedQuery;
-        array_push($this->values,$value);
+        array_push($this->values ,$value);
         return $this;
     }
 
@@ -104,7 +103,7 @@ class BaseModel extends Connection
             'column'=>$condition,
         ],!strpos($this->queryString,'WHERE')?BETWEEN_STATEMENT :AND_BETWEEN_STATEMENT);
         $this->queryString .= $preparedQuery;
-        array_push($this->values,$start,$end);
+        array_push($this->values ,$start,$end);
         return $this;
     }
     public function orderBy(string $column , string $mode = 'ASC'): static
@@ -126,7 +125,7 @@ class BaseModel extends Connection
     }
     public function limit(int $num): static
     {
-        $this->queryString .= ' LIMIT '.$num;
+        $this->queryString.= ' LIMIT '.$num;
         return $this;
     }
     public function join(string $table): static
@@ -163,11 +162,11 @@ class BaseModel extends Connection
         return $this;
     }
 
-    public function all(): bool|array
+    public  function all(): bool|array
     {
         return $this->select('*')->get_all();
     }
-    public function find(int $id): bool|array
+    public  function find(int $id): bool|\stdClass
     {
         return $this->select('*')->where('id',$id)->limit(1)->first();
     }

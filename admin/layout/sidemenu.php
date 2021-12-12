@@ -6,8 +6,8 @@
     </div>
     <div class="mdc-drawer__content">
         <div class="user-info">
-            <p class="name">Clyde Miles</p>
-            <p class="email">clydemiles@elenor.us</p>
+            <p class="name"> <?php echo $_SESSION['user']->fname.' '.$_SESSION['user']->lname ?></p>
+            <p class="email"><?php echo $_SESSION['user']->email ?></p>
         </div>
         <div class="mdc-list-group">
             <nav class="mdc-list mdc-drawer-menu">
@@ -85,7 +85,7 @@
         <div class="profile-actions">
             <a href="javascript:;">Settings</a>
             <span class="divider"></span>
-            <a href="javascript:;">Logout</a>
+            <a href="<?php echo url('logout.php')?>">Logout</a>
         </div>
         <div class="mdc-card premium-card">
             <div class="d-flex align-items-center">

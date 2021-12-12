@@ -1,5 +1,8 @@
 <?php
 include_once '../../app.php';
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
 $model = new \database\Categories();
 $categories = $model->all();
 include_once '../layout/header.php';
@@ -19,25 +22,24 @@ include_once '../layout/header.php';
                         </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        foreach ($categories as $category)
-                            echo '
-                                    <tr>
-                                        <td class="text-left">'.$category['name'].'</td>             
-                                       <td class="d-flex justify-content-end" >
-                                       <form action="'.CWD.'/delete.php?id='.$category['id'].'" method="post">
-                                           <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
-                                                <i class="material-icons mdc-button__icon">delete</i>
-                                          </button>
-                                       </form>
-                                      <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="'.CWD.'/show.php?id='.$category['id'].'">
-                                            <i class="material-icons mdc-button__icon">edite</i>
-                                      </a>
-                                      
-                                       </td>
-                                    </tr>
-                                    '
-                        ?>
+                        <?php foreach ($categories as $category){ ?>
+
+                            <tr>
+                                <td class="text-left"> <?php echo $category->name ?></td>
+                               <td class="d-flex justify-content-end" >
+                               <form action="<?php printf('%s/show.php?id=%s',CWD,$category->id??'') ?>" method="post">
+                                   <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
+                                        <i class="material-icons mdc-button__icon">delete</i>
+                                  </button>
+                               </form>
+                              <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="<?php printf('%s/show.php?id=%s',CWD,$category->id??'') ?>">
+                                    <i class="material-icons mdc-button__icon">edit</i>
+                              </a>
+
+                               </td>
+                            </tr>
+                         <?php };?>
+
                         </tbody>
                     </table>
                 </div>

@@ -1,4 +1,4 @@
-<?php require_once 'app.php'; ?>
+<?php include_once 'app.php'?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

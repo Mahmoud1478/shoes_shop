@@ -1,19 +1,24 @@
 <?php
-
 use Http\Server;
-
+use database\Users;
 include_once'../../app.php';
-$model = new \database\Users();
-if (!isset(Server::query()['id'])){
+
+
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
+if (!isset($_GET['id'] )){
     redirectFromCurrent('/all-users.php');
 }
-if (Server::method() === 'POST'){
+$model = new Users();
+
+if (Server::method() === 'POST' ){
     $fields = ['fname','lname','permission','email','password'];
     foreach ($fields as $field){
         if (isset($_REQUEST[$field]) && $_REQUEST[$field] ===''){
             $errors[$field] = 'field is required';
         }else{
-            unset($errors['$field']);
+            unset($errors[$field]);
         }
     }
     if(!count($errors) > 0 ){
@@ -24,13 +29,12 @@ if (Server::method() === 'POST'){
             'email'=>$_REQUEST['email'],
             'password'=>$_REQUEST['password'],
             'permissions'=>$_REQUEST['permission']
-        ])->where('id',Server::query()['id'])->save();
-        $_SESSION['user'] = $_REQUEST;
+        ])->where('id',$_GET['id'])->save();
         redirectFromCurrent('/all-users.php');
     }
 
 }else{
-    $user = $model->find(Server::query()['id']);
+    $user = $model->find($_GET['id']);
     if (!$user){
         redirect('admin/404.php',404);
     }
@@ -41,32 +45,32 @@ include_once '../layout/header.php';
 <div class="page-wrapper mdc-toolbar-fixed-adjust">
     <main class="content-wrapper">
         <div class="d-flex from-wrapper">
-            <form method="post" action="<?php echo urlFromCurrent('/show.php?id='.$user['id']??'');?>" class="custom-form w-sm-100 w-md-50">
+            <form method="post" action="<?php echo urlFromCurrent('/show.php?id='.$user->id??'');?>" class="custom-form w-sm-100 w-md-50">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="fname" name="fname" value="<?php if(isset($user)) { echo $user['fname'];} ?>">
+                            <input class="mdc-text-field__input" id="fname" name="fname" value="<?php if(isset($user)) { echo $user->fname;} ?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="fname" class="mdc-floating-label">First Name</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="lname" name="lname" value="<?php if(isset($user)) {echo $user['lname'];}?>">
+                            <input class="mdc-text-field__input" id="lname" name="lname" value="<?php if(isset($user)) {echo $user->lname;}?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="lname" class="mdc-floating-label">Last Name</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
                         <div class="mdc-text-field">
-                            <input class="mdc-text-field__input" id="email" type="email" name="email" value="<?php if(isset($user)) { echo $user['email'];}?>">
+                            <input class="mdc-text-field__input" id="email" type="email" name="email" value="<?php if(isset($user)) { echo $user->email;}?>">
                             <div class="mdc-line-ripple"></div>
                             <label for="email" class="mdc-floating-label">email</label>
                         </div>
                     </div>
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
                         <div class="mdc-select demo-width-class w-100" data-mdc-auto-init="MDCSelect">
-                            <input type="hidden" name="permission" value="<?php if(isset($user)) { echo $user['permissions'];}?>">
+                            <input type="hidden" name="permission" value="<?php if(isset($user)) { echo $user->permissions;}?>">
                             <i class="mdc-select__dropdown-icon"></i>
                             <div class="mdc-select__selected-text"></div>
                             <div class="mdc-select__menu mdc-menu-surface demo-width-class">
@@ -86,7 +90,7 @@ include_once '../layout/header.php';
                     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
                         <div class="mdc-text-field mdc-text-field--with-trailing-icon">
                             <i class="material-icons mdc-text-field__icon event-all" style="z-index: 50" id="show-field" data-show ="password">visibility</i>
-                            <input class="mdc-text-field__input" id="password" type="password" name="password" value="<?php if(isset($user)) { echo $user['password'];}?>">
+                            <input class="mdc-text-field__input" id="password" type="password" name="password" value="<?php if(isset($user)) { echo $user->password;}?>">
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">

@@ -3,21 +3,21 @@
     if (isset($_SESSION['user'])){
         redirectFromCurrent('');
     }
+    $model = new \database\Users();
     if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-        if ($_REQUEST['email'] ===''){
-            $errors['email'] = 'field is required';
-        }else{
-            unset($errors['email']);
-        }
-        if ($_REQUEST['password'] ===''){
-            $errors['password'] = 'field is required';
-        }else{
-            unset($errors['password']);
+        $model = new \database\Users();
+        $fields = ['email','password'];
+        foreach ($fields as $field){
+            if ($_REQUEST[$field] ===''){
+                $errors[$field] = 'field is required';
+            }else{
+                unset($errors[$field]);
+            }
         }
 
         if (! count($errors) > 0){
-            $model = new \database\Users();
             $user = $model->select('*')->where('email',$_REQUEST['email'])->where('password',$_REQUEST['password'])->first();
+
             if($user){
                 $_SESSION['user']=$user;
                 redirectFromCurrent('');
@@ -26,12 +26,6 @@
                 $errors['email'] = 'email maybe wrong';
             }
         }
-        $model = new \database\Users();
-        $model->delete()->where('fname','')->save();
-        dd([
-            $model->getQuery(),
-            $model->getValues()
-        ]);
 
     }
 ?>

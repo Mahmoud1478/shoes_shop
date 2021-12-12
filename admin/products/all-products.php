@@ -1,5 +1,8 @@
 <?php
 include_once '../../app.php';
+if (!$_SESSION['user']->permissions == 2){
+    redirect('');
+}
 use \database\Products;
 $model = new Products();
 $products = $model->select('products.*','categories.name as category')
@@ -26,28 +29,26 @@ include_once '../layout/header.php';?>
                         </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        foreach ($products as $product)
-                            echo '
-                                <tr>
-                                   <td class="text-left">'.$product['name'].'</td>       
-                                   <td class="text-left">'.$product['price'].'</td>
-                                   <td class="text-left">'.$product['category'].'</td>  
-                                   <td class="text-left">'.$product['picture'].'</td>        
-                                   <td class="d-flex justify-content-end" >
-                                       <form action="'.CWD.'/delete.php?id='.$product['id'].'" method="post">
-                                           <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
-                                                <i class="material-icons mdc-button__icon">delete</i>
-                                          </button>
-                                       </form>
-                                      <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="'.CWD.'/show.php?id='.$product['id'].'">
-                                            <i class="material-icons mdc-button__icon">edite</i>
-                                      </a>
-                                  
-                                   </td>
-                                </tr>
-                                '
-                        ?>
+                        <?php foreach($products as $product){ ?>
+                           <tr>
+                               <td class="text-left"><?php echo $product->name ?></td>
+                               <td class="text-left"><?php echo $product->price ?></td>
+                               <td class="text-left"><?php echo $product->category ?></td>
+                               <td class="text-left"><?php echo $product->picture ?></td>
+                               <td class="d-flex justify-content-end" >
+                                   <form action="<?php printf('%s/show.php?id=%s',CWD,$product->id??'') ?>" method="post">
+                                       <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
+                                           <i class="material-icons mdc-button__icon">delete</i>
+                                       </button>
+                                   </form>
+                                   <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="<?php printf('%s/show.php?id=%s',CWD,$product->id??''); ?>">
+                                       <i class="material-icons mdc-button__icon">edit</i>
+                                   </a>
+
+                               </td>
+
+                           </tr>
+                        <?php };?>
                         </tbody>
                     </table>
                 </div>
