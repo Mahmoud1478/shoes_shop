@@ -30,7 +30,6 @@ if (Server::method() === 'POST'){
             'category_id'=>$_REQUEST['category'],
             'picture'=>$_REQUEST['picture'],
         ])->where('id',$_GET['id'])->save();
-        $_SESSION['user'] = $_REQUEST;
         redirectFromCurrent('/all-products.php');
     }
 

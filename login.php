@@ -17,7 +17,7 @@
 
         if (! count($errors) > 0){
             $user = $model->select('*')->where('email',$_REQUEST['email'])->where('password',$_REQUEST['password'])->first();
-
+            //dd($model->where('id',5)->update(['name'=>'mahmoud','password'=>'1234'])->getQuery());
             if($user){
                 $_SESSION['user']=$user;
                 redirectFromCurrent('');

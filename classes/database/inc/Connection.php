@@ -3,20 +3,23 @@ namespace  database\inc;
 
 
 use Cassandra\Statement;
+use JetBrains\PhpStorm\Pure;
 
 class Connection{
     protected  static \PDO $connection;
     protected  \PDOStatement $statement  ;
-    protected  string $queryString = '';
     protected  array $values = [];
     private static array $options = [
         \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_OBJ,
         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
     ];
+    use Query;
     protected function __construct(){
+
         if (!isset($this->connection)){
             try {
                 static::$connection = new \PDO(DB_DRIVER.':host='.DB_Host.';dbname='.DB_NAME.';charset=utf8',DB_USER,DB_PASS,static::$options);
+                $this->reset();
 
             }catch (\PDOException $e){
                 echo $e->getMessage();
@@ -41,8 +44,8 @@ class Connection{
     }
     public  function save(): static
     {
-        $this->prepare($this->queryString)->bind($this->values);
-        $this->queryString = '';
+        $this->prepare($this->getQuery())->bind($this->values);
+        $this->reset();
         $this->values = [];
         return  $this;
     }
@@ -66,7 +69,7 @@ class Connection{
     }
     public function getQuery(): string
     {
-        return $this->queryString;
+        return $this->resolve();
     }
     public function getValues(): array
     {

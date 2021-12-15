@@ -1,7 +1,8 @@
 <?php include_once '../app.php';
-if (!$_SESSION['user']->permissions == 2){
-    redirect('');
-} ?>
+    if (!$_SESSION['user']->permissions == 2){
+        redirect('');
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
