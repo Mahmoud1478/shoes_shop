@@ -61,7 +61,7 @@
                                     </a>
                                 </div>
                                 <div class="mdc-list-item mdc-drawer-item">
-                                    <a class="mdc-drawer-link" href="/shoes/admin/categories/new.php">
+                                    <a class="mdc-drawer-link" href="/shoes/admin/categories/new-category.php">
                                         Add New
                                     </a>
                                 </div>
@@ -82,7 +82,7 @@
                                     </a>
                                 </div>
                                 <div class="mdc-list-item mdc-drawer-item">
-                                    <a class="mdc-drawer-link" href="/shoes/admin/products/new.php">
+                                    <a class="mdc-drawer-link" href="/shoes/admin/products/new-product.php">
                                         Add New
                                     </a>
                                 </div>
@@ -103,7 +103,7 @@
                                     </a>
                                 </div>
                                 <div class="mdc-list-item mdc-drawer-item">
-                                    <a class="mdc-drawer-link" href="/shoes/admin/users/new.php">
+                                    <a class="mdc-drawer-link" href="/shoes/admin/users/new-user.php">
                                         Add New
                                     </a>
                                 </div>

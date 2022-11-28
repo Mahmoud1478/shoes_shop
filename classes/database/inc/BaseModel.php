@@ -15,115 +15,127 @@ const ORDERBY_STATEMENT = ' ORDER BY %s %s';
 const GROUPBY_STATEMENT = ' GROUP BY %s ';
 const HASMaNY_STATEMENT = ' join {foreign_table} on {local_table}.id = {on}';
 const BLONGSTO_STATEMENT = ' join {foreign_table} on {local_key} = {foreign_key}';
-const JOIN_STATEMENT = ' JOIN %s';
-const LEFT_JOIN_STATEMENT = ' LEFT JOIN %s';
-const RIGHT_JOIN_STATEMENT = ' RIGHT JOIN %s';
-const ON_JOIN_STATEMENT = ' ON %s = %s';
+const JOIN_STATEMENT = ' %sJOIN %s';
+const ON_JOIN_STATEMENT = ' ON %s %s %s';
 
 class BaseModel extends Connection
 {
-    protected  string $tableName;
+    protected string $tableName;
     public function __construct()
     {
         parent::__construct();
         $this->tableName = $this->getName();
     }
 
-    private function getName(): bool|string
+    private function getName(): string
     {
-        $exploded_ = explode(DS,static::class);
+        $exploded_ = explode(DS, static::class);
         return end($exploded_);
     }
 
-    public  function create(array $columns){
+    public function create(array $columns): static
+    {
         $querySegments = Format::prepareSelect($columns);
-        $this->PREFIX_STATEMENT = vsprintf(INSERT_STATEMENT,[$this->tableName,$querySegments['columns'],$querySegments['placeholder']]);
-        $this->values  = array_merge($this->values , $querySegments['values']);
+        $this->PREFIX_STATEMENT = vsprintf(INSERT_STATEMENT, [$this->tableName, $querySegments['columns'], $querySegments['placeholder']]);
+        $this->values = array_merge($this->values, $querySegments['values']);
         //array_push($this->values,...$querySegments['values']);
-        $this->save();
+//        $this->save();
+        return $this;
     }
 
-    public  function select(string...$columns): static
+    public function select(string...$columns): static
     {
-        $this->PREFIX_STATEMENT = vsprintf(SELECT_STATEMENT,[Format::join(',',$columns),$this->tableName]);
-        return $this ;
+        $this->PREFIX_STATEMENT = vsprintf(SELECT_STATEMENT, [Format::joinColumns($columns), $this->tableName]);;
+        return $this;
     }
-    public  function update(array $columns): static
+    public function update(array $columns): static
     {
 
-        $this->PREFIX_STATEMENT = vsprintf(UPDATE_STATEMENT,[$this->tableName,Format::prepareUpdate($columns)]);
-        $this->values  = array_merge($this->values,array_values($columns));
+        $this->PREFIX_STATEMENT = vsprintf(UPDATE_STATEMENT, [$this->tableName, Format::joinUpdateColumns(array_keys($columns))]);
+        $this->values = array_merge($this->values, array_values($columns));
         //array_push($this->values,...$querySegments['values']);
         return $this;
     }
-    public  function delete(): static
+    public function delete(): static
     {
-        $this->PREFIX_STATEMENT = vsprintf(DELETE_STATEMENT,[$this->tableName,]);
+        $this->PREFIX_STATEMENT = vsprintf(DELETE_STATEMENT, [$this->tableName]);
         return $this;
     }
-    public  function where(string $condition , $value , string $operator = '='): static
+    public function where(string $column, $value, string $operator = '='): static
     {
-        $statement = strpos($this->WHERE_STATEMENT,'WHERE')?AND_STATEMENT:WHERE_STATEMENT;
-        $this->WHERE_STATEMENT .= vsprintf($statement,[$condition,$operator]);
-        array_push($this->values ,$value);
+        $statement = strpos($this->WHERE_STATEMENT, 'WHERE') ? AND_STATEMENT : WHERE_STATEMENT;
+        $this->WHERE_STATEMENT .= vsprintf($statement, [$column, $operator]);
+        $this->values[] = $value;
         return $this;
     }
-    public function orWhere(string $condition , $value , string $operator = '='): static
+    public function orWhere(string $column, $value, string $operator = '='): static
     {
-        $this->OR_STATEMENT .= vsprintf(OR_STATEMENT,[$condition,$operator]);
-        array_push($this->values ,$value);
+        $this->OR_STATEMENT .= vsprintf(OR_STATEMENT, [$column, $operator]);
+        $this->values[] = $value;
         return $this;
     }
 
-    public function between(string $condition , $start , $end): static
+    public function between(string $column, $start, $end): static
     {
-        $statement = strpos($this->WHERE_STATEMENT,'WHERE')?AND_BETWEEN_STATEMENT:BETWEEN_STATEMENT;
-        $this->WHERE_STATEMENT .= vsprintf($statement , [$condition,]);
-        array_push($this->values ,$start,$end);
+        $statement = strpos($this->WHERE_STATEMENT, 'WHERE') ? AND_BETWEEN_STATEMENT : BETWEEN_STATEMENT;
+        $this->WHERE_STATEMENT .= vsprintf($statement, [$column]);
+        array_push($this->values, $start, $end);
         return $this;
     }
-    public function orderBy(string $column , string $mode = 'ASC'): static
+    public function orderBy(string $column, string $mode = 'ASC'): static
     {
-        $this->ORDERBY_STATEMENT = vsprintf(ORDERBY_STATEMENT,[$column,$mode]);
+        $this->ORDERBY_STATEMENT = vsprintf(ORDERBY_STATEMENT, [$column, $mode]);
         return $this;
     }
     public function groupBy(string $column): static
     {
-        $this->GROUPBY_STATEMENT = vsprintf(GROUPBY_STATEMENT,[$column,]);
+        $this->GROUPBY_STATEMENT = vsprintf(GROUPBY_STATEMENT, [$column]);
         return $this;
     }
     public function limit(int $num): static
     {
-        $this->LIMIT_STATEMENT = ' LIMIT '.$num;
+        $this->LIMIT_STATEMENT = ' LIMIT ' . $num;
         return $this;
     }
     public function join(string $table): static
     {
-        $this->JOIN_STATEMENT .= vsprintf(JOIN_STATEMENT,[$table,]);
+        $this->JOIN_STATEMENT .= vsprintf(JOIN_STATEMENT, ['',$table]);
         return $this;
     }
     public function leftJoin(string $table): static
     {
-        $this->JOIN_STATEMENT .= vsprintf(LEFT_JOIN_STATEMENT,[$table,]);
+        $this->JOIN_STATEMENT .= vsprintf(JOIN_STATEMENT, ['LEFT ',$table]);
         return $this;
     }
     public function rightJoin(string $table): static
     {
-        $this->JOIN_STATEMENT .= vsprintf(RIGHT_JOIN_STATEMENT,[$table,]);
+        $this->JOIN_STATEMENT .= vsprintf(JOIN_STATEMENT, ['Right ',$table]);
         return $this;
     }
-    public function on(string $localKey , string $foreignKey): static
+    public function on(string $localKey, string $foreignKey ,string $operator = '='): static
     {
-        $this->JOIN_STATEMENT .= vsprintf(ON_JOIN_STATEMENT,[$localKey,$foreignKey]);
+        $this->JOIN_STATEMENT .= vsprintf(ON_JOIN_STATEMENT, [$localKey,$operator,$foreignKey]);
         return $this;
     }
 
-    public  function all(): bool|array
+    public function all(): array
     {
         return $this->select('*')->get_all();
     }
-    public  function find(int $id): bool|\stdClass
+    public function find(int $id)
     {
-        return $this->select('*')->where('id',$id)->limit(1)->first();
+        return $this->select('*')->where('id', $id)->limit(1)->first();
     }
+
+    /*reals*/
+
+    protected function hasOne()
+    {}
+    protected function hasMany()
+    {}
+    protected function belongsTo()
+    {}
+    protected function belongsToMany()
+    {}
+
 }

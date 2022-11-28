@@ -5,6 +5,7 @@ if (!$_SESSION['user']->permissions == 2){
 }
 $model = new \database\Categories();
 $categories = $model->all();
+$title = 'categories';
 include_once '../layout/header.php';
 ?>
 <!-- partial -->
@@ -27,7 +28,7 @@ include_once '../layout/header.php';
                             <tr>
                                 <td class="text-left"> <?php echo $category->name ?></td>
                                <td class="d-flex justify-content-end" >
-                               <form action="<?php printf('%s/show.php?id=%s',CWD,$category->id??'') ?>" method="post">
+                               <form action="<?php printf('%s/delete.php?id=%s',CWD,$category->id??'') ?>" method="post">
                                    <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
                                         <i class="material-icons mdc-button__icon">delete</i>
                                   </button>

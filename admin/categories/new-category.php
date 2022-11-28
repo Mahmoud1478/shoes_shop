@@ -25,7 +25,7 @@ if (Server::method() === 'POST'){
         redirectFromCurrent('/all-categories.php');
     }
 }
-
+$title = 'new-category';
 include_once '../layout/header.php';
 ?>
 <!-- partial -->

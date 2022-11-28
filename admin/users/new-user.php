@@ -29,7 +29,7 @@ if (Server::method() === 'POST'){
     }
 }
 
-
+$title = 'new-user';
 
 include_once '../layout/header.php';
 ?>

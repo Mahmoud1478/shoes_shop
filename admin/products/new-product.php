@@ -30,7 +30,7 @@ if (Server::method() === 'POST'){
         redirectFromCurrent('/all-products.php');
     }
 }
-
+$title = 'new-product';
 include_once '../layout/header.php';
 ?>
 <!-- partial -->

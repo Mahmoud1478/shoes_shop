@@ -8,4 +8,5 @@ const DB_USER = "root";
 const DB_PASS = "toor";
 const DB_NAME = "shoes_store";
 const DB_DRIVER = "mysql";
+const ADMIN_ROOT = "admin";
 if (!isset($errors)){static $errors = [];}

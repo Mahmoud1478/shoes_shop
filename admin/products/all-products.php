@@ -9,6 +9,7 @@ $products = $model->select('products.*','categories.name as category')
                     ->join('categories')->on('categories.id','products.category_id')
                     ->get_all();
 
+$title = 'products';
 include_once '../layout/header.php';?>
 <!-- partial -->
 <div class="page-wrapper mdc-toolbar-fixed-adjust">
@@ -36,7 +37,7 @@ include_once '../layout/header.php';?>
                                <td class="text-left"><?php echo $product->category ?></td>
                                <td class="text-left"><?php echo $product->picture ?></td>
                                <td class="d-flex justify-content-end" >
-                                   <form action="<?php printf('%s/show.php?id=%s',CWD,$product->id??'') ?>" method="post">
+                                   <form action="<?php printf('%s/delete.php?id=%s',CWD,$product->id??'') ?>" method="post">
                                        <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
                                            <i class="material-icons mdc-button__icon">delete</i>
                                        </button>

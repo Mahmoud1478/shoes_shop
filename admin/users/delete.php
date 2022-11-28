@@ -7,6 +7,6 @@ if (!$_SESSION['user']->permissions == 2){
 }
 if (Server::method() === 'POST'&& isset($_GET['id'])){
     $model = new Users();
-    $model->delete()->where('id',Server::query()['id'])->save();
+    $model->where('id',$_GET['id'])->delete()->save();
 }
 redirectFromCurrent('/all-users.php');

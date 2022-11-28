@@ -1,9 +1,8 @@
 <?php
 
 
-use JetBrains\PhpStorm\NoReturn;
 
-#[NoReturn] function dd($value){
+function dd($value){
     echo '<pre>';
     if (is_string($value) || is_bool($value)){
         echo $value;
@@ -14,15 +13,15 @@ use JetBrains\PhpStorm\NoReturn;
     die();
 }
 
-#[NoReturn] function redirectFromCurrent(string $url , int $status = 303){
-    header('location:'.CWD.$url ,response_code:$status);
-    die();
+function redirectFromCurrent(string $url , int $status = 303)
+{
+    header('location:'.CWD.$url ,true , $status);
+    exit();
 }
-#[NoReturn] function redirect(string $url , int $status = 303){
-    header('location:'.DOC_ROOT.$url ,response_code:$status);
+function redirect(string $url , int $status = 303){
+    header('location:'.DOC_ROOT.$url ,true , $status);
     //echo DOC_ROOT.$url;
-
-    die();
+    exit();
 }
 
 function urlFromCurrent(string $url): string
@@ -33,4 +32,25 @@ function url(string $url): string
 {
     return DOC_ROOT.$url;
 }
+function frontAssets(string $file)
+{
+    echo DOC_ROOT.$file;
+}
+function adminAssets(string $file)
+{
+    echo DOC_ROOT.ADMIN_ROOT.'assets'.$file;
+}
+
+function loadHeader(){
+
+}
+function loadFooter(){
+
+}
+
+function setTitle(){
+    global $title;
+    echo $title ?? '';
+}
+
 

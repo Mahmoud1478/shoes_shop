@@ -39,6 +39,7 @@ if (Server::method() === 'POST' ){
         redirect('admin/404.php',404);
     }
 }
+$title = 'show-user';
 include_once '../layout/header.php';
 ?>
 <!-- partial -->

@@ -1,8 +1,9 @@
 <?php
 include_once '../../app.php';
-if (!$_SESSION['user']->permissions == 2){
+if (!$_SESSION['user']->permissions == 2) {
     redirect('');
 }
+$title = 'users';
 $model = new \database\Users();
 $users = $model->all();
 include_once '../layout/header.php';
@@ -27,26 +28,26 @@ include_once '../layout/header.php';
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php foreach($users as $user){ ?>
-                                        <tr>
-                                            <td class="text-left"> <?php echo $user->fname?></td>
-                                            <td><?php echo $user->fname?></td>
-                                            <td><?php echo $user->lname?></td>
-                                            <td><?php echo $user->email?></td>
-                                            <td><?php echo \mappers\PermissionsMapper::getPermission($user->permissions) ?></td>
-                                           <td class="d-flex justify-content-end" >
-                                               <form action="<?php printf('%s/show.php?id=%s',CWD,$user->id??'') ?>" method="post">
-                                                   <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
-                                                        <i class="material-icons mdc-button__icon">delete</i>
-                                                  </button>
-                                               </form>
-                                              <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="<?php printf('%s/show.php?id=%s',CWD,$user->id??'') ?>">
-                                                    <i class="material-icons mdc-button__icon">edit</i>
-                                              </a>
-
-                                           </td>
-                                        </tr
-                                    <?php }; ?>
+                                        <?php foreach ($users as $user) {?>
+                                            <tr>
+                                                <td class="text-left"> <?php echo $user->fname ?></td>
+                                                <td><?php echo $user->lname ?></td>
+                                                <td><?php echo $user->email ?></td>
+                                                <td><?php echo $user->password ?></td>
+                                                <td><?php echo \mappers\PermissionsMapper::getPermission($user->permissions) ?></td>
+                                                <td class="d-flex justify-content-end" >
+                                                    <form action="<?php printf('%s/delete.php?id=%s', CWD, $user->id ?? '')?>" method="post">
+                                                        <button class="mdc-button mdc-button--raised icon-button filled-button--secondary" style="margin-right: 10px" type="submit">
+                                                            <i class="material-icons mdc-button__icon">delete</i>
+                                                        </button>
+                                                    </form>
+                                                    <a class="mdc-button mdc-button--raised icon-button filled-button--success" href="<?php printf('%s/show.php?id=%s', CWD, $user->id ?? '')?>">
+                                                        <i class="material-icons mdc-button__icon">edit</i>
+                                                    </a>
+                                                </td>
+                                            </tr
+                                        <?php }
+;?>
                                     </tbody>
                                 </table>
                             </div>

@@ -4,25 +4,19 @@ namespace database\inc;
 
 class Format
 {
-    public static function replace(array $values , string $target): string
+    public static function joinColumns (array $values): string
     {
-        foreach ($values as $key=> $value){
-            $target = str_replace('{'.$key.'}',$value,$target);
-        }
-        return $target;
+        return implode(',',$values);
     }
-    public static function join(string $separator,array $values): string
+
+    public static function  joinUpdateColumns(array $values): string
     {
-        $result = '';
-        $last = end($values);
-        foreach ($values as $value){
-           if ($value !== $last){
-               $result .= $value.$separator;
-           }else{
-               $result .= $value;
-           }
-        }
-        return $result;
+        return implode('=%s,',$values).'=%s';
+    }
+
+    public static function joinStatementSegments (array $segments): string
+    {
+        return implode(' ',$segments);
     }
 
     public static function prepareSelect(array $columns): array
@@ -40,20 +34,7 @@ class Format
                 $result['columns'] .= $column;
                 $result['placeholder'] .= '?';
             }
-            array_push( $result['values'],$value);
-        }
-        return $result;
-    }
-    public static function prepareUpdate(array $columns): string
-    {
-        $result = '';
-        $last = array_key_last($columns);
-        foreach ($columns as $column => $value){
-            if ($column !== $last){
-                $result .= $column.' = ?,';
-            }else{
-                $result .= $column.' = ?';
-            }
+            $result['values'][] = $value;
         }
         return $result;
     }
