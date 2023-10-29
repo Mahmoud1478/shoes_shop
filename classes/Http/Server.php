@@ -6,20 +6,18 @@ use JetBrains\PhpStorm\Pure;
 
 class Server
 {
-    public static function method(){
-        return $_SERVER['REQUEST_METHOD'];
-    }
-    public static function query(): array
+
+    public function __construct(private readonly array $data){}
+    public function all(): array
     {
-        $result = [] ;
-        foreach (explode('&',$_SERVER['QUERY_STRING']) as $item){
-            $items = explode('=',$item);
-            $result[$items[0]]=$items[1];
-        }
-        return $result;
+        return $this->data;
     }
-    public static function view(): array
+    function get(string $key)
     {
-        return $_SERVER;
+        return $this->data[$key]?? null;
+    }
+    public function __get(string $name)
+    {
+        return $this->data[strtoupper($name)] ?? null;
     }
 }

@@ -5,10 +5,12 @@ include_once "layout/head.php";
 
 
 <?php
-$model = new \database\Categories();
-dd($model->update(['id' => 1 ,'name' =>2,'parent'=>3])
+//$model = new \database\Categories();
+//dd($model->update(['id' => 1 ,'name' =>2,'parent'=>3])
+//
+//    ->getQuery());
 
-    ->getQuery());
+dd(11);
 
 ?>
 <!--    <div class="layout_padding collection_section">-->

@@ -11,5 +11,8 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "php": "^8.2",
+        "ext-http": "*"
+    }
 }

@@ -2,45 +2,97 @@
 
 
 namespace Session;
+
+
 class Session
 {
-    private function __construct(){}
 
-    public static function has(string $key )
+    public function __construct()
+    {
+        $this->init();
+    }
+
+    private function init(): void
+    {
+    }
+
+    public function has(string $key): bool
     {
         return isset($_SESSION[$key]);
     }
-    public static function start(){
-        if (!session_id()){
+
+    public function start(): false|string
+    {
+        if (!session_id()) {
             session_start();
         }
+        return session_id();
     }
 
-    public static function get(string $key)
+    public function get(string $key, mixed $default = null)
     {
-        return static::has($key) ? $_SESSION[$key] :false;
+        return $_SESSION[$key] ?? $default;
     }
 
-    public static function destroy()
+    public function set(string $key, mixed $value): mixed
+    {
+        $_SESSION[$key] = $value;
+        return $value;
+    }
+
+    public function destroy(): void
     {
         unset($_SESSION);
     }
 
-    public static function remove($key)
+    public function refresh(): string
     {
-        if (static::has($key)){
+        $this->destroy();
+        return $this->start();
+    }
+
+    public function forget($key)
+    {
+        if ($this->has($key)) {
             unset($_SESSION[$key]);
             return $key;
         }
         return false;
     }
 
-    public static function flash($key)
+    public function flash($key)
     {
-        if (static::has($key)){
-            $value = $_SESSION[$key];
-            static::remove($key);
-            return $value;
-        }
+        $value = $this->get($key);
+        $this->forget($key);
+        return $value;
     }
+
+    public function user(): array|null
+    {
+        return $this->get('user');
+    }
+
+    public function userId(string $idName = 'id'): string|int|null
+    {
+        return $this->get('user', [$idName => null,])[$idName];
+    }
+
+
+    public function userLogin(array $userData)
+    {
+        return $this->set('user', $userData);
+    }
+
+    public function userLogout(): void
+    {
+        $this->forget('user');
+        $this->refresh();
+    }
+
+    public function userIsLoggedIn(): bool
+    {
+        return (boolean)$this->user();
+    }
+
+
 }

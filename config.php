@@ -1,6 +1,11 @@
 <?php
+global $server;
+if (isset($_REQUEST)){
+}
+
 const Root = __DIR__;
-define("CWD", dirname($_SERVER['SCRIPT_NAME']));
+
+define("CWD", dirname($server->script_name));
 const DOC_ROOT = '/shoes/';
 const DS = DIRECTORY_SEPARATOR;
 const DB_Host = "localhost";
