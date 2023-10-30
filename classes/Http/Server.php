@@ -14,7 +14,7 @@ class Server
     }
     function get(string $key)
     {
-        return $this->data[$key]?? null;
+        return $this->data[strtoupper($key)]?? null;
     }
     public function __get(string $name)
     {

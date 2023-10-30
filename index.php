@@ -265,5 +265,5 @@ dd(11);
    	<!-- contact section end -->
 	<!-- section footer start -->
 <?php
-include_once "layout/footer.php";
-?>
+//include_once "layout/footer.php";
+//?>

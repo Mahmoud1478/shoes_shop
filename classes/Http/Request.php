@@ -10,10 +10,12 @@ class Request
     private array $get = [];
     private string $url = '/';
     private array $segments = [];
+    private array $headers = [];
 
     public function __construct(
         private readonly string $uri,
         private readonly string $method,
+        private readonly ?string $prevUrl
     )
     {
         $this->url = explode('?', $this->uri)[0];
@@ -21,11 +23,12 @@ class Request
         $this->post = $_POST;
         $this->request = $_REQUEST;
         $this->segments = array_keys($this->get);
+        $this->headers = apache_request_headers();
     }
 
     public static function capture(Server $server): Request
     {
-        return new self($server->get('REQUEST_URI'), $server->get('REQUEST_METHOD'));
+        return new self($server->get('REQUEST_URI'), $server->get('REQUEST_METHOD'), $server->get('http_referer'));
     }
 
     public function get(string $key, mixed $default = null)
@@ -65,7 +68,7 @@ class Request
 
     function all(): array
     {
-        return $this->request;
+        return $_REQUEST;
     }
 
     public function segmentValue(int|string $idx)
@@ -83,8 +86,31 @@ class Request
         return strtoupper($method) == $this->method;
     }
 
+    public function header(string $key, mixed $default = null): mixed
+    {
+        return $this->headers[ucwords($key, "\t\r\n\f\v-_")] ?? $default;
+    }
+
+    /**
+     * @return array
+     */
     public function headers(): array
     {
-        return http_get_request_headers();
+        return $this->headers;
+    }
+
+    public function expects(string $type): bool
+    {
+        return $this->header('accept') == $type;
+    }
+
+    public function expectsJson(): bool
+    {
+        return $this->expects('application/json');
+    }
+
+    public function previousUrl(): string
+    {
+        return $this->prevUrl;
     }
 }
